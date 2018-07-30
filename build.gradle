@@ -1,9 +1,12 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
+        classpath 'org.eclipse.jgit:org.eclipse.jgit:3.5.0.201409260305-r'
     }
 }
 
@@ -12,7 +15,9 @@ task wrapper(type: Wrapper) {
 }
 
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'com.jfrog.bintray'
 
 repositories.addAll rootProject.buildscript.repositories
 
@@ -25,4 +30,110 @@ dependencies {
 
     testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.1'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.0.1'
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compileClasspath
+}
+
+def determineVersion() {
+    def repo = new org.eclipse.jgit.storage.file.FileRepositoryBuilder()
+            .setGitDir(file("$projectDir/.git"))
+            .findGitDir()
+            .setMustExist(true)
+            .build()
+    def branchName = repo.branch
+    def commitid = repo.getRef('HEAD').objectId.name
+    if (branchName.startsWith('release-')) {
+        return [
+                name   : branchName.substring('release-'.length()),
+                commitid: commitid,
+                release: true
+        ]
+    } else {
+        return [
+                name: '0.0.1-SNAPSHOT',
+                commitid: commitid,
+                release: false
+        ]
+    }
+}
+def versionInfo = determineVersion()
+println "Version info: ${versionInfo}"
+
+
+group "com.dajudge.color-diff"
+version versionInfo.name
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier "sources"
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier = 'javadoc'
+}
+
+bintrayUpload.dependsOn build
+
+bintray {
+    user = System.getenv('BINATRAY_API_USER')
+    key = System.getenv('BINTRAY_API_KEY')
+    pkg {
+        version {
+            name = versionInfo.name
+            desc = "color-diff $versionInfo.name"
+            released = new Date()
+            vcsTag = versionInfo.commitid
+        }
+        repo = 'color-diff'
+        name = 'color-diff'
+        licenses = ['BSD 3-Clause']
+        vcsUrl = 'https://github.com/dajudge/color-diff.git'
+        configurations = ['archives']
+    }
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name "3-Clause BSD License"
+            url "https://opensource.org/licenses/BSD-3-Clause"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "alexstockinger"
+            name "Alex Stockinger"
+            email "mail@alexstockinger.de"
+            organizationUrl = 'http://www.alexstockinger.de'
+        }
+    }
+
+    scm {
+        url "https://github.com/dajudge/color-diff"
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourceJar
+            artifact javadocJar
+            groupId 'com.dajudge.color-diff'
+            artifactId 'color-diff'
+            version versionInfo.name
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'A library for comparing colors.')
+                root.appendNode('name', 'color-diff')
+                root.appendNode('url', 'https://github.com/dajudge/color-diff')
+                root.children().last() + pomConfig
+            }
+        }
+    }
 }
