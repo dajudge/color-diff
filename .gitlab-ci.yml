@@ -7,4 +7,4 @@ build-master:
   stage: build
   script:
     - docker build --pull -t builder_jdk8 builder/jdk8
-    - docker run --rm -v "$CI_PROJECT_DIR":/project --workdir /project builder_jdk8 /project/gradlew clean build
+    - docker run --rm -e CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME -e BINTRAY_API_USER=$BINTRAY_API_USER -e BINTRAY_API_KEY=$BINTRAY_API_KEY -v "$CI_PROJECT_DIR":/project --workdir /project builder_jdk8 /project/gradlew clean build

@@ -43,22 +43,25 @@ def determineVersion() {
             .findGitDir()
             .setMustExist(true)
             .build()
-    def branchName = repo.branch
     def commitid = repo.getRef('HEAD').objectId.name
-    if (branchName.startsWith('release-')) {
+    def branchName = System.getenv("CI_COMMIT_REF_NAME") ?: commitid
+    if (branchName.startsWith('release/')) {
         return [
-                name   : branchName.substring('release-'.length()),
+                branch  : branchName,
+                name    : branchName.substring('release/'.length()),
                 commitid: commitid,
-                release: true
+                release : true
         ]
     } else {
         return [
-                name: '0.0.1-SNAPSHOT',
+                branch  : branchName,
+                name    : '0.0.1-SNAPSHOT',
                 commitid: commitid,
-                release: false
+                release : false
         ]
     }
 }
+
 def versionInfo = determineVersion()
 println "Version info: ${versionInfo}"
 
@@ -76,10 +79,13 @@ task javadocJar(type: Jar) {
     classifier = 'javadoc'
 }
 
-bintrayUpload.dependsOn build
+if (versionInfo.release) {
+    println "Artifacts will be released to bintray."
+    build.finalizedBy bintrayUpload
+}
 
 bintray {
-    user = System.getenv('BINATRAY_API_USER')
+    user = System.getenv('BINTRAY_API_USER')
     key = System.getenv('BINTRAY_API_KEY')
     pkg {
         version {
