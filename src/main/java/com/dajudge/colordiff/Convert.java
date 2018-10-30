@@ -74,7 +74,7 @@ public class Convert {
      * Returns c converted to labcolor.
      *
      * @param c should have fields R,G,B
-     * @return <color>c</color> converted to labcolor
+     * @return <code>c</code> converted to labcolor
      */
     public static LabColor rgb_to_lab(final Color c) {
         return rgb_to_lab(new RgbColor(c));
@@ -84,7 +84,7 @@ public class Convert {
      * Returns c converted to labcolor.
      *
      * @param c should have fields R,G,B
-     * @return <color>c</color> converted to labcolor
+     * @return <code>c</code> converted to labcolor
      */
     public static LabColor rgb_to_lab(final RgbColor c) {
         return xyz_to_lab(rgb_to_xyz(c));

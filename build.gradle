@@ -87,6 +87,7 @@ if (versionInfo.release) {
 bintray {
     user = System.getenv('BINTRAY_API_USER')
     key = System.getenv('BINTRAY_API_KEY')
+    publications = ['mavenJava']
     pkg {
         version {
             name = versionInfo.name
@@ -98,7 +99,6 @@ bintray {
         name = 'color-diff'
         licenses = ['BSD 3-Clause']
         vcsUrl = 'https://github.com/dajudge/color-diff.git'
-        configurations = ['archives']
     }
 }
 
@@ -121,18 +121,6 @@ def pomConfig = {
     scm {
         url "https://github.com/dajudge/color-diff"
     }
-}
-
-model {
-    tasks.generatePomFileForMavenJavaPublication {
-        destination = file("$buildDir/pom.xml")
-    }
-}
-
-jar {
-    dependsOn "generatePomFileForMavenJavaPublication"
-    from("$buildDir/pom.xml")
-    into("META-INF/maven/$project.group/$project.name")
 }
 
 publishing {
