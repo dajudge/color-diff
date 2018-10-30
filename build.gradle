@@ -26,8 +26,6 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    compile 'org.apache.commons:commons-lang3:3.0'
-
     testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.1'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.0.1'
 }
@@ -79,6 +77,8 @@ task javadocJar(type: Jar) {
     classifier = 'javadoc'
 }
 
+build.dependsOn sourceJar, javadocJar
+
 if (versionInfo.release) {
     println "Artifacts will be released to bintray."
     build.finalizedBy bintrayUpload
@@ -115,7 +115,6 @@ def pomConfig = {
             id "alexstockinger"
             name "Alex Stockinger"
             email "mail@alexstockinger.de"
-            organizationUrl = 'http://www.alexstockinger.de'
         }
     }
 
@@ -124,14 +123,26 @@ def pomConfig = {
     }
 }
 
+model {
+    tasks.generatePomFileForMavenJavaPublication {
+        destination = file("$buildDir/pom.xml")
+    }
+}
+
+jar {
+    dependsOn "generatePomFileForMavenJavaPublication"
+    from("$buildDir/pom.xml")
+    into("META-INF/maven/$project.group/$project.name")
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
             artifact sourceJar
             artifact javadocJar
-            groupId 'com.dajudge.color-diff'
-            artifactId 'color-diff'
+            groupId project.group
+            artifactId project.name
             version versionInfo.name
             pom.withXml {
                 def root = asNode()
