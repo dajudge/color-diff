@@ -80,7 +80,7 @@ class ConvertTest {
     public void should_convert_to_expected_lab_color_4() {
         assertColorEquals(
                 new LabColor(100, 0.005, -0.010),
-                round_all(rgba_to_lab(new RgbColor(255, 255, 255, 1)))
+                round_all(rgba_to_lab(new RgbColor(255, 255, 255, 1.)))
         );
     }
 
@@ -88,7 +88,7 @@ class ConvertTest {
     public void should_convert_to_expected_lab_color_5() {
         assertColorEquals(
                 new LabColor(100, 0.005, -0.010),
-                round_all(rgba_to_lab(new RgbColor(0, 0, 0, 0)))
+                round_all(rgba_to_lab(new RgbColor(0, 0, 0, 0.)))
         );
     }
 

@@ -51,12 +51,11 @@ public class Palette {
      * Returns the hash key used for a {@link Color} in a palette map.
      *
      * @param c        should have fields R,G,B
-     * @param hasAlpha if A is also relevant.
      * @return the map key.
      */
-    public static String palette_map_key(final RgbColor c, boolean hasAlpha) {
+    public static String palette_map_key(final RgbColor c) {
         String s = "R" + c.r + "B" + c.g + "G" + c.b;
-        if (hasAlpha) {
+        if (c.a != null) {
             s = s + "A" + c.a;
         }
         return s;
@@ -77,56 +76,44 @@ public class Palette {
      * using the 'closest' mapping type.
      *
      * @param a         each element should have fields R,G,B
-     * @param aHasAlpha indicates if <code>a</code> also has an alpha component.
      * @param b         each element should have fields R,G,B
-     * @param bHasAlpha indicates if <code>b</code> also has an alpha component.
      * @return palette map
      */
     public static Map<String, RgbColor> map_palette(
             final List<RgbColor> a,
-            final boolean aHasAlpha,
-            final List<RgbColor> b,
-            final boolean bHasAlpha
+            final List<RgbColor> b
     ) {
-        return map_palette(a, aHasAlpha, b, bHasAlpha, CLOSEST);
+        return map_palette(a, b, CLOSEST);
     }
 
     /**
      * Returns a mapping from each color in a to the closest/farthest color in b using white as background color.
      *
      * @param a         each element should have fields R,G,B
-     * @param aHasAlpha indicates if <code>a</code> also has an alpha component.
      * @param b         each element should have fields R,G,B
-     * @param bHasAlpha indicates if <code>b</code> also has an alpha component.
      * @param type      should be the string 'closest' or 'furthest'
      * @return palette map
      */
     public static Map<String, RgbColor> map_palette(
             final List<RgbColor> a,
-            final boolean aHasAlpha,
             final List<RgbColor> b,
-            final boolean bHasAlpha,
             final MapType type
     ) {
-        return map_palette(a, aHasAlpha, b, bHasAlpha, type, new RgbColor(255, 255, 255, 1));
+        return map_palette(a, b, type, new RgbColor(255, 255, 255, 1.));
     }
 
     /**
      * Returns a mapping from each color in a to the closest/farthest color in b
      *
      * @param a         each element should have fields R,G,B
-     * @param aHasAlpha indicates if <code>a</code> also has an alpha component.
      * @param b         each element should have fields R,G,B
-     * @param bHasAlpha indicates if <code>b</code> also has an alpha component.
      * @param bc        background color used if <code>a</code> or <code>b</code> have an alpha component.
      * @param type      should be the string 'closest' or 'furthest'
      * @return palette map
      */
     public static Map<String, RgbColor> map_palette(
             final List<RgbColor> a,
-            final boolean aHasAlpha,
             final List<RgbColor> b,
-            final boolean bHasAlpha,
             final MapType type,
             final RgbColor bc
     ) {
@@ -135,7 +122,7 @@ public class Palette {
             RgbColor best_color = null;
             Double best_color_diff = null;
             for (final RgbColor color2 : b) {
-                final double current_color_diff = diff(color1, aHasAlpha, color2, bHasAlpha, bc);
+                final double current_color_diff = diff(color1, color2, bc);
 
                 if ((best_color == null) || ((type == CLOSEST) && (current_color_diff < best_color_diff))) {
                     best_color = color2;
@@ -147,7 +134,7 @@ public class Palette {
                     best_color_diff = current_color_diff;
                 }
             }
-            c.put(palette_map_key(color1, aHasAlpha), best_color);
+            c.put(palette_map_key(color1), best_color);
         }
         return c;
     }
@@ -197,18 +184,16 @@ public class Palette {
 
     private static double diff(
             final RgbColor c1,
-            final boolean c1HasAlpha,
             final RgbColor c2,
-            final boolean c2HasAlpha,
             final RgbColor bc
     ) {
         Function<RgbColor, LabColor> conv_c1 = Convert::rgb_to_lab;
         Function<RgbColor, LabColor> conv_c2 = Convert::rgb_to_lab;
         Function<RgbColor, LabColor> rgba_conv = c -> Convert.rgba_to_lab(c, bc);
-        if (c1HasAlpha) {
+        if (c1.a != null) {
             conv_c1 = rgba_conv;
         }
-        if (c2HasAlpha) {
+        if (c2.a != null) {
             conv_c2 = rgba_conv;
         }
         return ciede2000(conv_c1.apply(c1), conv_c2.apply(c2));

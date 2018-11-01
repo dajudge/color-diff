@@ -38,7 +38,8 @@ import java.awt.*;
  * @author Alex Stockinger
  */
 public class RgbColor {
-    public final double r, b, g, a;
+    public final double r, b, g;
+    public final Double a;
 
     public RgbColor(final Color c) {
         r = c.getRed();
@@ -48,10 +49,10 @@ public class RgbColor {
     }
 
     public RgbColor(final double r, final double g, final double b) {
-        this(r, g, b, 0.0);
+        this(r, g, b, null);
     }
 
-    public RgbColor(final double r, final double g, final double b, final double a) {
+    public RgbColor(final double r, final double g, final double b, final Double a) {
         this.r = r;
         this.g = g;
         this.b = b;
@@ -77,6 +78,9 @@ public class RgbColor {
         }
         if (Double.compare(rgbColor.g, g) != 0) {
             return false;
+        }
+        if (rgbColor.a == null || a == null) {
+            return a == null && rgbColor.a == null;
         }
         return Double.compare(rgbColor.a, a) == 0;
     }

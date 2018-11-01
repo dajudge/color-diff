@@ -39,11 +39,7 @@ import java.util.Map;
 import static com.dajudge.colordiff.Convert.rgb_to_lab;
 import static com.dajudge.colordiff.Palette.MapType.CLOSEST;
 import static com.dajudge.colordiff.Palette.MapType.FURTHEST;
-import static com.dajudge.colordiff.Palette.lab_palette_map_key;
-import static com.dajudge.colordiff.Palette.map_palette;
-import static com.dajudge.colordiff.Palette.map_palette_lab;
-import static com.dajudge.colordiff.Palette.match_palette_lab;
-import static com.dajudge.colordiff.Palette.palette_map_key;
+import static com.dajudge.colordiff.Palette.*;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -94,49 +90,49 @@ class PaletteTest {
     @Test
     public void should_map_all_colors_to_themselves_when_possible_1() {
         final Map<String, RgbColor> expected1_1 = new HashMap<>();
-        expected1_1.put(palette_map_key(white, false), white);
-        expected1_1.put(palette_map_key(black, false), black);
-        expected1_1.put(palette_map_key(navy, false), navy);
-        expected1_1.put(palette_map_key(blue, false), blue);
-        expected1_1.put(palette_map_key(yellow, false), yellow);
-        expected1_1.put(palette_map_key(gold, false), gold);
-        assertEquals(expected1_1, map_palette(colors1, false, colors1, false));
+        expected1_1.put(palette_map_key(white), white);
+        expected1_1.put(palette_map_key(black), black);
+        expected1_1.put(palette_map_key(navy), navy);
+        expected1_1.put(palette_map_key(blue), blue);
+        expected1_1.put(palette_map_key(yellow), yellow);
+        expected1_1.put(palette_map_key(gold), gold);
+        assertEquals(expected1_1, map_palette(colors1, colors1));
     }
 
     @Test
     public void should_map_all_colors_to_themselves_when_possible_2() {
         final Map<String, RgbColor> expected1_2 = new HashMap<>();
-        expected1_2.put(palette_map_key(white_a, true), white_a);
-        expected1_2.put(palette_map_key(black_a, true), black_a);
-        expected1_2.put(palette_map_key(navy_a, true), navy_a);
-        expected1_2.put(palette_map_key(blue_a, true), blue_a);
-        expected1_2.put(palette_map_key(yellow_a, true), yellow_a);
-        expected1_2.put(palette_map_key(gold_a, true), gold_a);
-        assertEquals(expected1_2, map_palette(colors1_a, true, colors1_a, true));
+        expected1_2.put(palette_map_key(white_a), white_a);
+        expected1_2.put(palette_map_key(black_a), black_a);
+        expected1_2.put(palette_map_key(navy_a), navy_a);
+        expected1_2.put(palette_map_key(blue_a), blue_a);
+        expected1_2.put(palette_map_key(yellow_a), yellow_a);
+        expected1_2.put(palette_map_key(gold_a), gold_a);
+        assertEquals(expected1_2, map_palette(colors1_a, colors1_a));
     }
 
     @Test
     public void should_map_navy_to_blue_and_yellow_to_gold_when_navy_and_yellow_are_missing() {
         final Map<String, RgbColor> expected2 = new HashMap<>();
-        expected2.put(palette_map_key(white, false), white);
-        expected2.put(palette_map_key(black, false), black);
-        expected2.put(palette_map_key(navy, false), blue);
-        expected2.put(palette_map_key(blue, false), blue);
-        expected2.put(palette_map_key(yellow, false), gold);
-        expected2.put(palette_map_key(gold, false), gold);
-        assertEquals(expected2, map_palette(colors1, false, colors2, false));
+        expected2.put(palette_map_key(white), white);
+        expected2.put(palette_map_key(black), black);
+        expected2.put(palette_map_key(navy), blue);
+        expected2.put(palette_map_key(blue), blue);
+        expected2.put(palette_map_key(yellow), gold);
+        expected2.put(palette_map_key(gold), gold);
+        assertEquals(expected2, map_palette(colors1, colors2));
     }
 
     @Test
     public void should_map_white_to_black_and_black_and_navy_and_blue_to_yellow_and_yellow_and_gold_to_blue() {
         final Map<String, RgbColor> expected3 = new HashMap<>();
-        expected3.put(palette_map_key(white, false), black);
-        expected3.put(palette_map_key(black, false), yellow);
-        expected3.put(palette_map_key(navy, false), yellow);
-        expected3.put(palette_map_key(blue, false), yellow);
-        expected3.put(palette_map_key(yellow, false), blue);
-        expected3.put(palette_map_key(gold, false), blue);
-        assertEquals(expected3, map_palette(colors1, false, colors3, false, FURTHEST));
+        expected3.put(palette_map_key(white), black);
+        expected3.put(palette_map_key(black), yellow);
+        expected3.put(palette_map_key(navy), yellow);
+        expected3.put(palette_map_key(blue), yellow);
+        expected3.put(palette_map_key(yellow), blue);
+        expected3.put(palette_map_key(gold), blue);
+        assertEquals(expected3, map_palette(colors1, colors3, FURTHEST));
     }
 
     @Test
