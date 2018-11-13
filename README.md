@@ -1,5 +1,6 @@
 # color-diff
-[![pipeline status](https://gitlab.com/dajudge/color-diff/badges/master/pipeline.svg)](https://gitlab.com/dajudge/color-diff/commits/master)
+[![Pipeline status](https://gitlab.com/dajudge/color-diff/badges/master/pipeline.svg)](https://gitlab.com/dajudge/color-diff/commits/master)
+[![Maven Central](https://img.shields.io/maven-central/v/com.dajudge.color-diff/color-diff.svg?maxAge=2592000)](http://search.maven.org/#search%7Cga%7C1%7Cg%3Acom.dajudge.color-diff%20a%3Acolor-diff)
 
 __Disclaimer__: This project aims to be a 1:1 port of Markus Ekholm's great
 [color-diff](https://github.com/markusn/color-diff) library which is
