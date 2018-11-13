@@ -24,6 +24,9 @@ repositories.addAll rootProject.buildscript.repositories
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
+javadoc {
+    options.encoding = 'UTF-8'
+}
 
 dependencies {
     testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.1'
